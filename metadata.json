@@ -1,0 +1,6 @@
+{
+  "name": "Sate Taichan Rotterdam - Makassar",
+  "description": "Website resmi dan digital storefront Sate Taichan Rotterdam Makassar dengan katalog menu lengkap, status buka langsung, dan pemesanan otomatis via WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-warm-orange: #F39223;
+  --color-spicy-red: #ED1C24;
+  --color-charcoal: #1A1A1A;
+  --color-warm-cream: #FAF7F2;
+  --color-warm-surface: #FFFFFF;
+  --color-warm-border: #E8E2D8;
+  --color-clean-white: #FFFFFF;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #FAF7F2;
+    color: #1A1A1A;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  html.dark {
+    background-color: #121214;
+    color: #F5F5F7;
+  }
+}
+
+/* Custom scrollbar styling for category pill bars and drawers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
