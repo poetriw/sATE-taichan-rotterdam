@@ -190,7 +190,7 @@ export const MenuCatalog: React.FC = () => {
                         isCutout ? 'object-contain' : 'object-cover'
                       }`}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/src/assets/images/hero_sate_taichan_1794494904829.jpg';
+                        (e.target as HTMLImageElement).src = '/assets/images/hero_sate_taichan_1794494904829.jpg';
                       }}
                     />
 
@@ -329,7 +329,7 @@ export const MenuCatalog: React.FC = () => {
                 <div className="bg-[#FAF7F2] dark:bg-neutral-900 border border-[#E8E2D8] dark:border-neutral-800 rounded-2xl p-3 flex flex-col items-center">
                   <span className="text-xs font-bold text-[#1A1A1A] dark:text-white mb-2">Halaman 1: Menu Sate Utama</span>
                   <img
-                    src="/public/assets/aistudio/menu_taicahn_2_4183eccd.jpg"
+                    src="/assets/aistudio/menu_taicahn_2_4183eccd.jpg"
                     alt="Menu Sate Taichan Rotterdam Hal 1"
                     className="w-full max-h-[600px] object-contain rounded-xl shadow-xs"
                   />
@@ -337,7 +337,7 @@ export const MenuCatalog: React.FC = () => {
                 <div className="bg-[#FAF7F2] dark:bg-neutral-900 border border-[#E8E2D8] dark:border-neutral-800 rounded-2xl p-3 flex flex-col items-center">
                   <span className="text-xs font-bold text-[#1A1A1A] dark:text-white mb-2">Halaman 2: Menu Komplit & Tambahan</span>
                   <img
-                    src="/public/assets/aistudio/menu_taichan_6fb1f3fc.jpg"
+                    src="/assets/aistudio/menu_taichan_6fb1f3fc.jpg"
                     alt="Menu Sate Taichan Rotterdam Hal 2"
                     className="w-full max-h-[600px] object-contain rounded-xl shadow-xs"
                   />

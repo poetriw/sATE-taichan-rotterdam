@@ -73,7 +73,7 @@ export const AdminModal: React.FC = () => {
     setCategory('Sate Taichan');
     setPrice(25000);
     setDescription('');
-    setImage('/src/assets/images/hero_sate_taichan_1794494904829.jpg');
+    setImage('/assets/images/hero_sate_taichan_1794494904829.jpg');
     setPortionDetail('');
     setIsBestSeller(false);
     setIsAvailable(true);
@@ -109,7 +109,7 @@ export const AdminModal: React.FC = () => {
         category,
         price: Number(price),
         description: description.trim(),
-        image: image.trim() || '/src/assets/images/hero_sate_taichan_1794494904829.jpg',
+        image: image.trim() || '/assets/images/hero_sate_taichan_1794494904829.jpg',
         portionDetail: portionDetail.trim(),
         isBestSeller,
         isAvailable,
@@ -377,7 +377,7 @@ export const AdminModal: React.FC = () => {
                         type="text"
                         value={image}
                         onChange={(e) => setImage(e.target.value)}
-                        placeholder="/src/assets/images/... atau https://..."
+                        placeholder="/assets/images/... atau https://..."
                         className="w-full px-3 py-2 rounded-xl bg-white border border-[#E8E2D8] text-[#1A1A1A] focus:outline-none focus:border-[#F39223]"
                       />
                     </div>
@@ -470,7 +470,7 @@ export const AdminModal: React.FC = () => {
                                 alt={p.name}
                                 className="w-9 h-9 rounded-lg object-cover bg-[#F5F2EB] shrink-0 border border-[#E8E2D8]"
                                 onError={(e) => {
-                                  (e.target as HTMLImageElement).src = '/src/assets/images/hero_sate_taichan_1794494904829.jpg';
+                                  (e.target as HTMLImageElement).src = '/assets/images/hero_sate_taichan_1794494904829.jpg';
                                 }}
                               />
                               <div>

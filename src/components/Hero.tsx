@@ -63,7 +63,7 @@ export const Hero: React.FC = () => {
               <div className="inline-flex items-center gap-3.5 p-2 pr-5 bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 rounded-2xl shadow-sm">
                 <div className="w-13 h-13 rounded-full overflow-hidden shrink-0 shadow-sm border border-[#F39223]/30">
                   <img
-                    src="/public/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
+                    src="/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
                     alt="Logo Sate Taichan Rotterdam"
                     className="w-full h-full object-cover scale-[1.04]"
                   />
@@ -199,7 +199,7 @@ export const Hero: React.FC = () => {
                 <div className="relative rounded-3xl overflow-hidden border border-[#E8E2D8] dark:border-neutral-700 bg-white dark:bg-[#18181B] p-3 shadow-md group">
                   <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-black">
                     <img
-                      src="/src/assets/images/hero_sate_taichan_1794494904829.jpg"
+                      src="/assets/images/hero_sate_taichan_1794494904829.jpg"
                       alt="Sate Taichan Rotterdam Special"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />

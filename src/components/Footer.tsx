@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 shadow-md border border-[#F39223]/30">
                 <img
-                  src="/public/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
+                  src="/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
                   alt="Logo Resmi Sate Taichan Rotterdam"
                   className="w-full h-full object-cover scale-[1.04]"
                 />

@@ -38,9 +38,20 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const PRODUCTS_STORAGE_KEY = 'str_products_v6_all_photos';
+const PRODUCTS_STORAGE_KEY = 'str_products_v7_vercel_assets';
 const SETTINGS_STORAGE_KEY = 'str_settings_v3';
 const CART_STORAGE_KEY = 'str_cart_v3';
+
+const normalizeAssetPath = (url: string): string => {
+  if (!url) return url;
+  if (url.startsWith('/public/assets/')) {
+    return url.replace('/public/assets/', '/assets/');
+  }
+  if (url.startsWith('/src/assets/images/')) {
+    return url.replace('/src/assets/images/', '/assets/images/');
+  }
+  return url;
+};
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Products State
@@ -49,7 +60,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(PRODUCTS_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((p: Product) => ({
+            ...p,
+            image: normalizeAssetPath(p.image),
+          }));
+        }
       }
     } catch (e) {
       console.warn('Failed to parse saved products from localStorage:', e);
@@ -76,7 +92,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem(CART_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          return parsed.map((item: CartItem) => ({
+            ...item,
+            product: item.product
+              ? { ...item.product, image: normalizeAssetPath(item.product.image) }
+              : item.product,
+          }));
+        }
       }
     } catch (e) {
       console.warn('Failed to parse saved cart from localStorage:', e);

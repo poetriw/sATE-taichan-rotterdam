@@ -67,7 +67,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
             alt={product.name}
             className={`w-full h-full ${isCutout ? 'object-contain' : 'object-cover'}`}
             onError={(e) => {
-              (e.target as HTMLImageElement).src = '/src/assets/images/hero_sate_taichan_1794494904829.jpg';
+              (e.target as HTMLImageElement).src = '/assets/images/hero_sate_taichan_1794494904829.jpg';
             }}
           />
           {!isCutout && (

@@ -14,37 +14,37 @@ export const GallerySection: React.FC = () => {
   const galleryItems: GalleryItem[] = [
     {
       id: 'g1',
-      image: '/src/assets/images/hero_sate_taichan_1794494904829.jpg',
+      image: '/assets/images/hero_sate_taichan_1794494904829.jpg',
       caption: 'Sate Taichan Daging bakar gurih dengan sambal ulek rawit merah segar dan potongan jeruk nipis.',
       tag: 'Signature Menu',
     },
     {
       id: 'g2',
-      image: '/src/assets/images/product_taichan_kulit_1794494905622.jpg',
+      image: '/assets/images/product_taichan_kulit_1794494905622.jpg',
       caption: 'Sate Kulit Taichan Crispy digoreng dan dipanggang hingga kecokelatan renyah.',
       tag: 'Crispy Favorite',
     },
     {
       id: 'g3',
-      image: '/src/assets/images/gallery_streetfood_rotterdam_1794494907100.jpg',
+      image: '/assets/images/gallery_streetfood_rotterdam_1794494907100.jpg',
       caption: 'Suasana santap malam santai di Jl. WR Supratman tepat di samping Benteng Rotterdam Makassar.',
       tag: 'Makassar Night Vibe',
     },
     {
       id: 'g4',
-      image: '/src/assets/images/product_paket_hemat_1794494906504.jpg',
+      image: '/assets/images/product_paket_hemat_1794494906504.jpg',
       caption: 'Paket Hemat lengkap dengan lontong pulen daun pisang dan kuah kaldu ayam gurih.',
       tag: 'Porsi Kenyang',
     },
     {
       id: 'g5',
-      image: '/src/assets/images/product_taichan_daging_1794494905535.jpg',
+      image: '/assets/images/product_taichan_daging_1794494905535.jpg',
       caption: 'Daging ayam segar pilihan dipotong pas untuk menjaga keempukan dan sari daging saat dipanggang.',
       tag: 'Fresh Ingredients',
     },
     {
       id: 'g6',
-      image: '/src/assets/images/hero_sate_taichan_1794494904829.jpg',
+      image: '/assets/images/hero_sate_taichan_1794494904829.jpg',
       caption: 'Aroma arang batok kelapa dan bumbu gurih yang membuat siapapun ketagihan.',
       tag: '#PedasnyaBikinNagih',
     },

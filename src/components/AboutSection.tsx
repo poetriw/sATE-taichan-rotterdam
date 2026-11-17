@@ -83,7 +83,7 @@ export const AboutSection: React.FC = () => {
           <div className="lg:col-span-5 space-y-4">
             <div className="relative rounded-3xl overflow-hidden border border-[#E8E2D8] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-md">
               <img
-                src="/src/assets/images/gallery_streetfood_rotterdam_1794494907100.jpg"
+                src="/assets/images/gallery_streetfood_rotterdam_1794494907100.jpg"
                 alt="Suasana Kuliner Sate Taichan Rotterdam Makassar"
                 className="w-full h-80 object-cover"
               />
@@ -100,14 +100,14 @@ export const AboutSection: React.FC = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="relative rounded-2xl overflow-hidden border border-[#E8E2D8] dark:border-neutral-800 bg-white dark:bg-neutral-900 h-40 shadow-xs">
                 <img
-                  src="/src/assets/images/product_taichan_kulit_1794494905622.jpg"
+                  src="/assets/images/product_taichan_kulit_1794494905622.jpg"
                   alt="Sate Kulit Taichan Crispy"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="relative rounded-2xl overflow-hidden border border-[#E8E2D8] dark:border-neutral-800 bg-white dark:bg-neutral-900 h-40 shadow-xs">
                 <img
-                  src="/src/assets/images/product_paket_hemat_1794494906504.jpg"
+                  src="/assets/images/product_paket_hemat_1794494906504.jpg"
                   alt="Paket Hemat Sate Taichan Rotterdam"
                   className="w-full h-full object-cover"
                 />

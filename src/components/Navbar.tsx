@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
             {/* Official Circular Badge Logo */}
             <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-full overflow-hidden shadow-md group-hover:scale-105 transition-transform shrink-0 border border-[#F39223]/30">
               <img
-                src="/public/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
+                src="/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
                 alt="Logo Sate Taichan Rotterdam"
                 className="w-full h-full object-cover scale-[1.04]"
                 onError={(e) => {
