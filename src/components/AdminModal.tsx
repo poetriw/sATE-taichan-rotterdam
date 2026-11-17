@@ -550,7 +550,7 @@ export const AdminModal: React.FC = () => {
                   <span>Nomor WhatsApp Tujuan Pesanan</span>
                 </h4>
                 <p className="text-[#6B655B] leading-relaxed">
-                  Masukkan nomor WhatsApp kasir atau admin resmi (gunakan format internasional diawali 62, contoh: 6281234567890).
+                  Masukkan nomor WhatsApp kasir atau admin resmi (gunakan format internasional diawali 62, contoh: 6282238862922).
                 </p>
                 <div>
                   <label className="text-[#555048] font-semibold block mb-1">
@@ -561,7 +561,7 @@ export const AdminModal: React.FC = () => {
                     required
                     value={settingsForm.whatsappNumber}
                     onChange={(e) => setSettingsForm({ ...settingsForm, whatsappNumber: e.target.value })}
-                    placeholder="Contoh: 6281234567890"
+                    placeholder="Contoh: 6282238862922"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-[#E8E2D8] text-[#1A1A1A] font-mono focus:outline-none focus:border-[#F39223]"
                   />
                 </div>

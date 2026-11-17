@@ -39,7 +39,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const PRODUCTS_STORAGE_KEY = 'str_products_v7_vercel_assets';
-const SETTINGS_STORAGE_KEY = 'str_settings_v3';
+const SETTINGS_STORAGE_KEY = 'str_settings_v4';
 const CART_STORAGE_KEY = 'str_cart_v3';
 
 const normalizeAssetPath = (url: string): string => {

@@ -1,7 +1,7 @@
 import { BusinessSettings, Product } from '../types';
 
 export const INITIAL_BUSINESS_SETTINGS: BusinessSettings = {
-  whatsappNumber: '6281234567890', // Default nomor WhatsApp placeholder (mudah diganti di Admin Portal)
+  whatsappNumber: '6282238862922', // Nomor WhatsApp resmi Sate Taichan Rotterdam (082238862922)
   address: 'Jl. WR Supratman (Samping Taman Benteng Rotterdam), Makassar, Sulawesi Selatan',
   operationalHoursWeekday: 'Senin – Sabtu: 17.00 – 23.30 WITA',
   operationalHoursWeekend: 'Malam Minggu: 17.00 – 24.00 WITA',

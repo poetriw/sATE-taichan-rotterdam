@@ -30,7 +30,8 @@ export function generateWhatsAppOrderMessage(
   details: OrderDetails,
   businessPhone: string
 ): { message: string; url: string } {
-  const cleanPhone = businessPhone.replace(/\D/g, '');
+  const rawDigits = businessPhone.replace(/\D/g, '');
+  const cleanPhone = rawDigits.startsWith('0') ? `62${rawDigits.slice(1)}` : rawDigits;
   const { totalPrice } = calculateCartTotals(cart);
 
   const orderTypeLabel = details.orderType === 'dine-in' 
