@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Menu, X, Flame, ShieldCheck, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, Menu, X, ShieldCheck, Sun, Moon, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -21,8 +21,8 @@ export const Navbar: React.FC = () => {
       {/* Garis navbar atas penuh menyambung sampai ujung (100% full width, tidak terpotong) */}
       <div className="w-full h-1 bg-gradient-to-r from-[#F39223] via-[#ED1C24] to-[#F39223]" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-8 h-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-2 sm:gap-6 lg:gap-8 h-18 sm:h-20">
           
           {/* Zone 1: Brand wordmark & Logo */}
           <a
@@ -31,10 +31,10 @@ export const Navbar: React.FC = () => {
               e.preventDefault();
               handleNavClick('hero');
             }}
-            className="flex items-center gap-3 group shrink-0"
+            className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0"
           >
             {/* Official Circular Badge Logo */}
-            <div className="w-12 h-12 sm:w-13 sm:h-13 rounded-full overflow-hidden shadow-md group-hover:scale-105 transition-transform shrink-0 border border-[#F39223]/30">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden shadow-md group-hover:scale-105 transition-transform shrink-0 border border-[#F39223]/30">
               <img
                 src="/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
                 alt="Logo Sate Taichan Rotterdam"
@@ -46,12 +46,12 @@ export const Navbar: React.FC = () => {
             </div>
             <div className="whitespace-nowrap">
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-base sm:text-lg tracking-tight text-[#1A1A1A] dark:text-white uppercase font-sans">
+                <span className="font-extrabold text-xs sm:text-base lg:text-lg tracking-tight text-[#1A1A1A] dark:text-white uppercase font-sans">
                   SATE TAICHAN <span className="text-[#F39223]">ROTTERDAM</span>
                 </span>
               </div>
-              <span className="text-[11px] font-bold text-[#ED1C24] flex items-center gap-1 tracking-wide">
-                <Flame className="w-3 h-3 fill-[#ED1C24]" /> #PedasnyaBikinNagih
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#ED1C24] tracking-wide block">
+                #PedasnyaBikinNagih
               </span>
             </div>
           </a>
@@ -91,14 +91,14 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* Zone 3: Actions (Theme Toggle + Shopping Bag + Order Button) */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Dark / Light Mode Toggle Button */}
             <button
               type="button"
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap'}
               aria-label="Toggle tema gelap dan terang"
-              className="p-2.5 rounded-xl bg-[#F5F2EB] dark:bg-neutral-800 text-[#1A1A1A] dark:text-neutral-200 hover:text-[#F39223] dark:hover:text-[#F39223] border border-[#E8E2D8] dark:border-neutral-700 transition-all cursor-pointer flex items-center justify-center shadow-xs"
+              className="p-2 sm:p-2.5 rounded-xl bg-[#F5F2EB] dark:bg-neutral-800 text-[#1A1A1A] dark:text-neutral-200 hover:text-[#F39223] dark:hover:text-[#F39223] border border-[#E8E2D8] dark:border-neutral-700 transition-all cursor-pointer flex items-center justify-center shadow-xs"
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
@@ -111,9 +111,9 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => setIsCartOpen(true)}
               aria-label={`Lihat keranjang pesanan (${totalItems} item)`}
-              className="relative p-2.5 bg-[#F5F2EB] dark:bg-neutral-800 hover:bg-[#EAE5DC] dark:hover:bg-neutral-700 border border-[#E8E2D8] dark:border-neutral-700 rounded-xl text-[#1A1A1A] dark:text-white transition-all cursor-pointer flex items-center gap-2 group shadow-xs"
+              className="relative p-2 sm:p-2.5 bg-[#F5F2EB] dark:bg-neutral-800 hover:bg-[#EAE5DC] dark:hover:bg-neutral-700 border border-[#E8E2D8] dark:border-neutral-700 rounded-xl text-[#1A1A1A] dark:text-white transition-all cursor-pointer flex items-center gap-2 group shadow-xs"
             >
-              <ShoppingBag className="w-5 h-5 text-[#F39223] group-hover:scale-110 transition-transform" />
+              <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-[#F39223] group-hover:scale-110 transition-transform" />
               <span className="hidden sm:inline text-xs font-bold text-[#1A1A1A] dark:text-white">Keranjang</span>
               {totalItems > 0 && (
                 <span className="bg-[#ED1C24] text-white font-extrabold text-[11px] min-w-5 h-5 px-1.5 rounded-full flex items-center justify-center shadow-md">
@@ -125,10 +125,10 @@ export const Navbar: React.FC = () => {
             {/* Primary Order CTA */}
             <button
               onClick={() => handleNavClick('menu')}
-              className="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 bg-[#F39223] hover:bg-[#de8016] text-white text-xs font-bold rounded-xl shadow-sm active:scale-95 transition-all whitespace-nowrap shrink-0 cursor-pointer"
+              className="hidden lg:inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#F39223] hover:bg-[#de8016] text-white text-xs font-bold rounded-xl shadow-sm active:scale-95 transition-all whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <Flame className="w-4 h-4 fill-white" />
               <span>Pesan Sekarang</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
 
             {/* Mobile Hamburger Toggle */}

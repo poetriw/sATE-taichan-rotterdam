@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Minus, Flame, ShoppingBag, CheckCircle } from 'lucide-react';
+import { X, Plus, Minus, ShoppingBag, CheckCircle } from 'lucide-react';
 import { Product, SpicyLevel } from '../types';
 import { formatRupiah } from '../utils/orderLogic';
 import { useCart } from '../context/CartContext';
@@ -75,9 +75,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
           )}
           
           {product.isBestSeller && (
-            <div className="absolute bottom-3 left-4 bg-[#ED1C24] text-white text-[11px] font-black uppercase px-3 py-1 rounded-md flex items-center gap-1 shadow-md">
-              <Flame className="w-3.5 h-3.5 fill-white" />
-              <span>Menu Favorit / Best Seller</span>
+            <div className="absolute bottom-3 left-4 bg-[#ED1C24] text-white text-[11px] font-black uppercase px-3 py-1 rounded-md shadow-md">
+              Menu Favorit / Best Seller
             </div>
           )}
         </div>
@@ -110,29 +109,28 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ product,
             </p>
           </div>
 
-          {/* Spicy Level Selector (if applicable) */}
+          {/* Sambal Selector (Kacang / Pedas) */}
           {product.spicyLevelAvailable && (
             <div className="pt-2 border-t border-[#E8E2D8] dark:border-neutral-800 space-y-2">
-              <label className="text-xs font-bold text-[#1A1A1A] dark:text-white flex items-center gap-1.5">
-                <Flame className="w-4 h-4 text-[#F39223]" />
-                <span>Pilih Level Pedas Sambal:</span>
+              <label className="text-xs font-bold text-[#1A1A1A] dark:text-white block">
+                Pilih Sambal:
               </label>
 
-              <div className="grid grid-cols-3 gap-2">
-                {(['Sedang', 'Pedas', 'Ekstra Pedas'] as SpicyLevel[]).map((lvl) => (
+              <div className="grid grid-cols-2 gap-2.5">
+                {(['Kacang', 'Pedas'] as SpicyLevel[]).map((sambal) => (
                   <button
-                    key={lvl}
+                    key={sambal}
                     type="button"
-                    onClick={() => setSpicyLevel(lvl)}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer flex flex-col items-center gap-1 ${
-                      spicyLevel === lvl
-                        ? 'bg-gradient-to-r from-[#F39223] to-[#ED1C24] border-[#F39223] text-white shadow-xs'
+                    onClick={() => setSpicyLevel(sambal)}
+                    className={`py-2.5 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer flex flex-col items-center gap-0.5 ${
+                      spicyLevel === sambal
+                        ? 'bg-[#F39223] border-[#F39223] text-white shadow-xs'
                         : 'bg-[#FAF7F2] dark:bg-neutral-800 border-[#E8E2D8] dark:border-neutral-700 text-[#555048] dark:text-neutral-300 hover:border-[#F39223]'
                     }`}
                   >
-                    <span>{lvl}</span>
-                    <span className="text-[10px] font-normal opacity-85">
-                      {lvl === 'Sedang' ? 'Gurih Nikmat' : lvl === 'Pedas' ? 'Pedas Khas' : 'Pedas Nampol'}
+                    <span>Sambal {sambal}</span>
+                    <span className="text-[10px] font-normal opacity-90">
+                      {sambal === 'Kacang' ? 'Gurih manis kacang sangrai' : 'Rawit merah ulek segar'}
                     </span>
                   </button>
                 ))}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Tag, Flame } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export const PromoSection: React.FC = () => {
@@ -18,14 +18,12 @@ export const PromoSection: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           
           {/* Promo Text Info */}
-          <div className="space-y-2 text-center md:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#ED1C24]/10 border border-[#ED1C24]/30 rounded-full text-xs font-bold text-[#ED1C24]">
-              <Tag className="w-3.5 h-3.5" />
-              <span>{businessSettings.promoDiscountText}</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-black text-[#1A1A1A] dark:text-white flex items-center justify-center md:justify-start gap-2">
-              <Flame className="w-5 h-5 text-[#F39223] fill-[#F39223]" />
-              <span>{businessSettings.promoTitle}</span>
+          <div className="space-y-1.5 text-center md:text-left">
+            <span className="inline-block text-xs font-bold uppercase tracking-wider text-[#ED1C24]">
+              {businessSettings.promoDiscountText}
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black text-[#1A1A1A] dark:text-white">
+              {businessSettings.promoTitle}
             </h3>
             <p className="text-[#555048] dark:text-neutral-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
               {businessSettings.promoDescription}

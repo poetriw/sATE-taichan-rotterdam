@@ -1,14 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { Flame, ShieldCheck, MapPin, Clock, ArrowRight, MessageSquare, Sparkles, Image as ImageIcon } from 'lucide-react';
-import { getMakassarOperatingStatus } from '../utils/orderLogic';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  ArrowRight,
+  ArrowDownRight,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  MapPin,
+  Clock,
+  MessageSquare,
+} from 'lucide-react';
+import { getMakassarOperatingStatus, formatRupiah } from '../utils/orderLogic';
 import { useCart } from '../context/CartContext';
 import { ThreeTaichanCanvas } from './ThreeTaichanCanvas';
+import { Product, SpicyLevel } from '../types';
+
+const CUTOUT_NAMES = [
+  'sate_taichan_bakar',
+  'sate_kulit_bakar',
+  'sate_bakso_bakar',
+  'sate_bakso_goreng',
+  'nasi_jeruk_komplit',
+  'lontong',
+  'mineral_water',
+];
+
+const isCutoutImage = (imagePath: string) =>
+  CUTOUT_NAMES.some((name) => imagePath.includes(name));
 
 export const Hero: React.FC = () => {
   const [operatingStatus, setOperatingStatus] = useState(() => getMakassarOperatingStatus());
-  const { setIsCartOpen } = useCart();
-  const [visualMode, setVisualMode] = useState<'3d' | 'photo'>('3d');
-  const [selectedSpicyLevel, setSelectedSpicyLevel] = useState<number>(2);
+  const { products, setIsCartOpen, setSelectedProductForDetail } = useCart();
+
+  // Strictly 2 sambal options: Kacang or Pedas
+  const [selectedSambal, setSelectedSambal] = useState<SpicyLevel>('Pedas');
+
+  // Top 3 signature menu carousel index & pause state
+  const [activeTopIndex, setActiveTopIndex] = useState(1);
+  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -17,254 +45,444 @@ export const Hero: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const scrollToMenu = () => {
-    const el = document.getElementById('menu');
+  // Select 3 top signature items
+  const topThreeMenus = useMemo<Product[]>(() => {
+    const preferredIds = ['str-01', 'str-02', 'str-08'];
+    const picked = preferredIds
+      .map((id) => products.find((p) => p.id === id))
+      .filter((p): p is Product => Boolean(p));
+
+    if (picked.length === 3) return picked;
+
+    const bestSellers = products.filter((p) => p.isBestSeller && p.isAvailable);
+    if (bestSellers.length >= 3) return bestSellers.slice(0, 3);
+    return products.slice(0, 3);
+  }, [products]);
+
+  // Gently cycle the 3 top menus unless user is interacting
+  useEffect(() => {
+    if (topThreeMenus.length < 3 || isCarouselPaused) return;
+    const timer = setInterval(() => {
+      setActiveTopIndex((prev) => (prev + 1) % 3);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [topThreeMenus.length, isCarouselPaused]);
+
+  const handleShift = (direction: -1 | 1) => {
+    if (topThreeMenus.length === 0) return;
+    setActiveTopIndex((prev) => (prev + direction + topThreeMenus.length) % topThreeMenus.length);
+  };
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const spicyLevels = [
-    { level: 1, name: 'Santai', rawit: '3 Rawit', desc: 'Pedas gurih ramah pemula', color: 'from-amber-400 to-orange-500' },
-    { level: 2, name: 'Nagih', rawit: '8 Rawit', desc: 'Rekomendasi khas Rotterdam!', color: 'from-orange-500 to-red-500' },
-    { level: 3, name: 'Meledak', rawit: '15+ Rawit', desc: 'Nampol juara keringat mengucur 🔥', color: 'from-red-600 to-rose-700' },
+  const sambalOptions: { id: SpicyLevel; title: string; subtitle: string; note: string }[] = [
+    {
+      id: 'Kacang',
+      title: 'Sambal Kacang',
+      subtitle: 'Gurih manis kacang sangrai',
+      note: 'Kacang tanah sangrai dihaluskan hangat dengan bumbu gurih manis khas taichan.',
+    },
+    {
+      id: 'Pedas',
+      title: 'Sambal Pedas',
+      subtitle: 'Rawit merah ulek segar',
+      note: 'Cabai rawit merah segar diulek langsung, pedas nampol berpadu perasan jeruk nipis.',
+    },
   ];
 
+  const activeSambalInfo = sambalOptions.find((s) => s.id === selectedSambal) || sambalOptions[1];
+
+  // Compute left, center, right slot items for the 3-card stage
+  const leftIdx = topThreeMenus.length === 3 ? (activeTopIndex + 2) % 3 : 0;
+  const centerIdx = topThreeMenus.length === 3 ? activeTopIndex : 0;
+  const rightIdx = topThreeMenus.length === 3 ? (activeTopIndex + 1) % 3 : 0;
+
+  const slots =
+    topThreeMenus.length === 3
+      ? [
+          { slot: 'left' as const, index: leftIdx, product: topThreeMenus[leftIdx] },
+          { slot: 'center' as const, index: centerIdx, product: topThreeMenus[centerIdx] },
+          { slot: 'right' as const, index: rightIdx, product: topThreeMenus[rightIdx] },
+        ]
+      : topThreeMenus.map((product, index) => ({
+          slot: 'center' as const,
+          index,
+          product,
+        }));
+
   return (
-    <section id="hero" className="relative min-h-[82vh] flex flex-col justify-between bg-[#FAF7F2] dark:bg-[#121214] pt-8 pb-0 border-b border-[#E8E2D8] dark:border-neutral-800 transition-colors duration-300 overflow-hidden">
-      
-      {/* Ambient background glows */}
-      <div className="absolute top-10 left-1/4 w-96 h-96 bg-[#F39223]/10 dark:bg-[#F39223]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#ED1C24]/10 dark:bg-[#ED1C24]/15 rounded-full blur-3xl pointer-events-none" />
+    <section
+      id="hero"
+      className="relative bg-[#FAF7F2] dark:bg-[#121214] pt-8 sm:pt-12 pb-10 border-b border-[#E8E2D8] dark:border-neutral-800 transition-colors duration-300 overflow-hidden"
+    >
+      {/* Subtle architectural background glow matching brand orange/red palette */}
+      <div className="absolute -top-24 left-1/4 w-[28rem] h-[28rem] bg-[#F39223]/8 dark:bg-[#F39223]/12 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10 flex-1 flex items-center py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center w-full">
-          
-          {/* Left Column: Headlines, Brand Badge & Actions */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            
-            {/* Trust badge & Makassar Live Status */}
-            <div className="inline-flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-neutral-800 border border-[#E8E2D8] dark:border-neutral-700 text-emerald-700 dark:text-emerald-400 text-xs font-semibold shadow-xs">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Halal Certified Indonesia</span>
-              </span>
-
-              <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold shadow-xs ${
-                operatingStatus.isOpen 
-                  ? 'bg-white dark:bg-neutral-800 border-[#F39223]/50 text-[#F39223]' 
-                  : 'bg-white dark:bg-neutral-800 border-[#E8E2D8] dark:border-neutral-700 text-neutral-500 dark:text-neutral-400'
-              }`}>
-                <span className={`w-2 h-2 rounded-full ${operatingStatus.isOpen ? 'bg-[#F39223] animate-ping' : 'bg-neutral-400'}`} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-14 sm:space-y-16">
+        {/* BAND 1: Top Asymmetric Editorial Split (matching reference top area) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left: Brand Headline, Concise Copy, 2-Sambal Choice & CTAs */}
+          <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
+            {/* Simple, natural status line */}
+            <div className="inline-flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1.5 text-xs font-medium text-[#555048] dark:text-neutral-400">
+              <span className="inline-flex items-center gap-2 font-semibold text-[#1A1A1A] dark:text-neutral-200">
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    operatingStatus.isOpen ? 'bg-emerald-500' : 'bg-neutral-400'
+                  }`}
+                />
                 <span>{operatingStatus.statusText}</span>
               </span>
+              <span className="text-[#D8D0C5] dark:text-neutral-700 hidden sm:inline">•</span>
+              <span>100% Halal Indonesia</span>
             </div>
 
-            {/* Official Logo Badge & Tagline Lockup */}
-            <div className="flex items-center justify-center lg:justify-start pt-1">
-              <div className="inline-flex items-center gap-3.5 p-2 pr-5 bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 rounded-2xl shadow-sm">
-                <div className="w-13 h-13 rounded-full overflow-hidden shrink-0 shadow-sm border border-[#F39223]/30">
-                  <img
-                    src="/assets/aistudio/logo_sate_taichan_rotterdam_full.png"
-                    alt="Logo Sate Taichan Rotterdam"
-                    className="w-full h-full object-cover scale-[1.04]"
-                  />
-                </div>
-                <div className="text-left">
-                  <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6B665E] dark:text-neutral-400">
-                    Official Brand • Benteng Rotterdam
-                  </span>
-                  <div className="font-black text-sm sm:text-base flex items-center gap-1">
-                    <span className="text-[#F39223]">#Pedasnya</span>
-                    <span className="text-[#ED1C24]">BikinNagih</span>
-                    <Flame className="w-3.5 h-3.5 fill-[#ED1C24] text-[#ED1C24] ml-0.5" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#1A1A1A] dark:text-white tracking-tight leading-[1.12] [text-wrap:balance]">
-              Pedasnya <span className="text-[#F39223]">Bikin Nagih</span>, Rasanya Bikin Balik Lagi!
+            {/* Main Headline with reference-style directional accent */}
+            <h1 className="text-3xl sm:text-5xl lg:text-[3.35rem] font-black text-[#1A1A1A] dark:text-white tracking-tight leading-[1.1] [text-wrap:balance]">
+              Pedasnya{' '}
+              <span className="text-[#F39223] inline-flex items-center gap-2">
+                <span>Bikin Nagih</span>
+                <span
+                  aria-hidden="true"
+                  className="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#F39223] text-white align-middle"
+                >
+                  <ArrowDownRight className="w-5 h-5" />
+                </span>
+              </span>
+              <br />
+              Rasanya Bikin Balik Lagi
             </h1>
 
-            {/* Subheadline */}
-            <p className="text-[#555048] dark:text-neutral-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
-              Sensasi sate taichan daging ayam empuk juicy dibakar fresh dengan bumbu gurih meresap dan sambal rawit ulek pedas segar racikan khas Rotterdam di samping Taman Benteng Rotterdam, Makassar.
+            {/* Editorial description */}
+            <p className="text-[#555048] dark:text-neutral-300 text-sm sm:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed">
+              Sate taichan daging ayam pilihan dibakar segar di atas arang batok kelapa dengan bumbu gurih meresap dan racikan sambal khas di samping Taman Benteng Rotterdam, Makassar.
             </p>
 
-            {/* Interactive Spicy Level Meter Preview */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 shadow-xs max-w-xl mx-auto lg:mx-0">
-              <div className="flex items-center justify-between text-xs mb-2.5">
-                <span className="font-bold text-[#1A1A1A] dark:text-white flex items-center gap-1.5">
-                  <Flame className="w-3.5 h-3.5 text-[#ED1C24] fill-[#ED1C24]" />
-                  <span>Pilih Karakter Pedas Anda:</span>
+            {/* 2 Sambal Options Only: Kacang & Pedas */}
+            <div className="max-w-lg mx-auto lg:mx-0 pt-1">
+              <div className="flex items-center justify-between text-xs mb-2">
+                <span className="font-bold text-[#1A1A1A] dark:text-white">
+                  Pilihan Sambal Favorit
                 </span>
                 <span className="text-[11px] font-semibold text-[#F39223]">
-                  {spicyLevels.find((s) => s.level === selectedSpicyLevel)?.rawit}
+                  2 Varian Sambal
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                {spicyLevels.map((sp) => (
-                  <button
-                    key={sp.level}
-                    type="button"
-                    onClick={() => setSelectedSpicyLevel(sp.level)}
-                    className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center border ${
-                      selectedSpicyLevel === sp.level
-                        ? 'bg-gradient-to-r text-white shadow-sm border-transparent ' + sp.color
-                        : 'bg-[#FAF7F2] dark:bg-neutral-800 text-[#555048] dark:text-neutral-300 border-[#E8E2D8] dark:border-neutral-700 hover:border-[#F39223]'
-                    }`}
-                  >
-                    <span>Lvl {sp.level} {sp.name}</span>
-                    <span className="text-[10px] opacity-85 font-normal">{sp.rawit}</span>
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 gap-2.5">
+                {sambalOptions.map((item) => {
+                  const isActive = selectedSambal === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setSelectedSambal(item.id)}
+                      className={`py-2.5 px-3.5 rounded-xl text-left transition-all cursor-pointer border ${
+                        isActive
+                          ? 'bg-[#F39223] border-[#F39223] text-white shadow-xs'
+                          : 'bg-white dark:bg-[#18181B] border-[#E8E2D8] dark:border-neutral-800 text-[#1A1A1A] dark:text-neutral-200 hover:border-[#F39223]'
+                      }`}
+                    >
+                      <span className="block text-xs sm:text-sm font-bold">
+                        {item.title}
+                      </span>
+                      <span
+                        className={`block text-[11px] mt-0.5 ${
+                          isActive ? 'text-white/90' : 'text-[#6B665E] dark:text-neutral-400'
+                        }`}
+                      >
+                        {item.subtitle}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
 
-              <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-2 text-center lg:text-left italic">
-                "{spicyLevels.find((s) => s.level === selectedSpicyLevel)?.desc}"
+              <p className="text-xs text-[#6B665E] dark:text-neutral-400 mt-2">
+                {activeSambalInfo.note}
               </p>
             </div>
 
-            {/* Location & Hours Quick Indicators */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1 text-xs text-[#4A4640] dark:text-neutral-300">
-              <div className="flex items-center gap-2 bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 px-3.5 py-2 rounded-xl shadow-xs">
-                <MapPin className="w-4 h-4 text-[#F39223] shrink-0" />
+            {/* Compact Address & Operating Hours */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-xs text-[#555048] dark:text-neutral-400 pt-1">
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-[#F39223] shrink-0" />
                 <span>Jl. WR Supratman (Samping Benteng Rotterdam)</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 px-3.5 py-2 rounded-xl shadow-xs">
-                <Clock className="w-4 h-4 text-[#ED1C24] shrink-0" />
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-[#ED1C24] shrink-0" />
                 <span>Senin–Sabtu 17.00–23.30 | Malam Minggu s/d 24.00</span>
-              </div>
+              </span>
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
               <button
-                onClick={scrollToMenu}
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#F39223] hover:bg-[#de8016] text-white font-bold text-sm shadow-sm active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                type="button"
+                onClick={() => scrollToSection('menu')}
+                className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#F39223] hover:bg-[#de8016] text-white font-bold text-xs sm:text-sm shadow-sm active:scale-95 transition-all inline-flex items-center justify-center gap-2.5 cursor-pointer"
               >
-                <Flame className="w-4 h-4 fill-white" />
-                <span>Lihat Katalog & Harga</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Lihat Katalog Menu</span>
+                <span className="w-5 h-5 rounded-full bg-white text-[#F39223] inline-flex items-center justify-center">
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </span>
               </button>
 
               <button
+                type="button"
                 onClick={() => setIsCartOpen(true)}
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white dark:bg-[#18181B] hover:bg-[#F5F2EB] dark:hover:bg-neutral-800 border border-[#E8E2D8] dark:border-neutral-700 text-[#1A1A1A] dark:text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                className="w-full sm:w-auto px-6 py-3 rounded-full bg-white dark:bg-[#18181B] hover:bg-[#F5F2EB] dark:hover:bg-neutral-800 border border-[#E8E2D8] dark:border-neutral-700 text-[#1A1A1A] dark:text-white font-semibold text-xs sm:text-sm transition-all inline-flex items-center justify-center gap-2 cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4 text-[#F39223]" />
-                <span>Pesan Sekarang (WhatsApp)</span>
+                <span>Pesan via WhatsApp</span>
               </button>
             </div>
           </div>
 
-          {/* Right Column: Interactive 3D Grill or Photo Food Showcase */}
-          <div className="lg:col-span-5 flex flex-col items-center">
-            
-            {/* View Switcher Pills */}
-            <div className="mb-3.5 inline-flex items-center p-1 bg-white dark:bg-neutral-800 border border-[#E8E2D8] dark:border-neutral-700 rounded-2xl shadow-xs">
-              <button
-                type="button"
-                onClick={() => setVisualMode('3d')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  visualMode === '3d'
-                    ? 'bg-gradient-to-r from-[#F39223] to-[#ED1C24] text-white shadow-xs'
-                    : 'text-[#555048] dark:text-neutral-300 hover:text-[#1A1A1A]'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>3D Grill 360°</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setVisualMode('photo')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  visualMode === 'photo'
-                    ? 'bg-[#F39223] text-white shadow-xs'
-                    : 'text-[#555048] dark:text-neutral-300 hover:text-[#1A1A1A]'
-                }`}
-              >
-                <ImageIcon className="w-3.5 h-3.5" />
-                <span>Foto Real Menu</span>
-              </button>
-            </div>
-
-            {/* Display either 3D Interactive Canvas or Photo Card */}
-            <div className="w-full max-w-md lg:max-w-none">
-              {visualMode === '3d' ? (
-                <ThreeTaichanCanvas />
-              ) : (
-                <div className="relative rounded-3xl overflow-hidden border border-[#E8E2D8] dark:border-neutral-700 bg-white dark:bg-[#18181B] p-3 shadow-md group">
-                  <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-black">
-                    <img
-                      src="/assets/images/hero_sate_taichan_1794494904829.jpg"
-                      alt="Sate Taichan Rotterdam Special"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent flex flex-col justify-end p-5">
-                      <span className="text-[11px] font-bold text-[#F39223] uppercase tracking-widest">
-                        100% Ayam Segar Pilihan
-                      </span>
-                      <h3 className="text-white font-extrabold text-lg sm:text-xl">
-                        Daging Juicy • Sambal Pedas Ulek
-                      </h3>
-                      <p className="text-neutral-300 text-xs mt-1">
-                        Dibakar fresh di atas arang batok kelapa saat Anda memesan.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="absolute top-6 right-6 bg-white/95 dark:bg-neutral-800/95 backdrop-blur-sm border border-[#E8E2D8] dark:border-neutral-700 rounded-xl px-3 py-1.5 shadow-md flex items-center gap-2">
-                    <Flame className="w-4 h-4 text-[#ED1C24] fill-[#ED1C24]" />
-                    <span className="text-xs font-bold text-[#1A1A1A] dark:text-white">#1 Taichan Makassar</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Sub-card badge */}
-              <div className="mt-3 flex items-center justify-between px-4 py-2.5 bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 rounded-2xl text-xs text-[#555048] dark:text-neutral-300 shadow-xs">
-                <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#F39223]" />
-                  <span>Dine-In & Takeaway Tersedia</span>
-                </span>
-                <span className="font-bold text-[#F39223]">Harga Mulai Rp 25.000</span>
+          {/* Right: Asymmetric Sculpted Photo Frame matching reference top-right silhouette */}
+          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-sm sm:max-w-md">
+              {/* Soft tilted accent backing plate in brand warm orange */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-3 -inset-y-2.5 rounded-[2rem] bg-[#F39223]/18 dark:bg-[#F39223]/20 border border-[#F39223]/25 pointer-events-none"
+              />
+              <div className="relative aspect-[4/3] sm:aspect-square overflow-hidden rounded-tl-[2.5rem] rounded-br-[2.5rem] rounded-tr-2xl rounded-bl-2xl border border-[#E8E2D8] dark:border-neutral-700 bg-[#18181B] shadow-lg">
+                <img
+                  src="/assets/images/hero_sate_taichan_1794494904829.jpg"
+                  alt="Sate Taichan Rotterdam dibakar arang dengan sambal pedas dan kacang"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
+          </div>
+        </div>
 
+        {/* BAND 2: Interactive 3 Top Menu Showcase (3 top menu yang bergantian bergeser) */}
+        <div
+          className="pt-4 border-t border-[#E8E2D8]/80 dark:border-neutral-800/80"
+          onMouseEnter={() => setIsCarouselPaused(true)}
+          onMouseLeave={() => setIsCarouselPaused(false)}
+        >
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#F39223]">
+                Menu Andalan
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-[#1A1A1A] dark:text-white tracking-tight mt-0.5">
+                3 Top Menu Favorit Taichaners
+              </h2>
+            </div>
+
+            {/* Slide Controls */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleShift(-1)}
+                aria-label="Geser top menu ke kiri"
+                className="p-2 rounded-full bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 text-[#1A1A1A] dark:text-white hover:border-[#F39223] hover:text-[#F39223] transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => handleShift(1)}
+                aria-label="Geser top menu ke kanan"
+                className="p-2 rounded-full bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 text-[#1A1A1A] dark:text-white hover:border-[#F39223] hover:text-[#F39223] transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
+          {/* 3-Card Stage (Left flanking - Center Spotlight - Right flanking) */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
+            {slots.map(({ slot, index, product }) => {
+              const isCenter = slot === 'center';
+              const isCutout = isCutoutImage(product.image);
+
+              return (
+                <div
+                  key={`${slot}-${product.id}`}
+                  onClick={() => {
+                    if (isCenter) {
+                      setSelectedProductForDetail(product);
+                    } else {
+                      setActiveTopIndex(index);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      if (isCenter) {
+                        setSelectedProductForDetail(product);
+                      } else {
+                        setActiveTopIndex(index);
+                      }
+                    }
+                  }}
+                  aria-label={
+                    isCenter
+                      ? `Lihat detail ${product.name}`
+                      : `Geser ${product.name} ke tengah`
+                  }
+                  className={`cursor-pointer transition-all duration-500 rounded-3xl border overflow-hidden ${
+                    isCenter
+                      ? 'md:col-span-6 bg-white dark:bg-[#18181B] border-[#F39223]/60 shadow-xl scale-100 z-10'
+                      : 'hidden md:block md:col-span-3 bg-white/75 dark:bg-[#18181B]/70 border-[#E8E2D8] dark:border-neutral-800 opacity-70 hover:opacity-95 scale-[0.94]'
+                  }`}
+                >
+                  {/* Image container */}
+                  <div
+                    className={`relative w-full overflow-hidden flex items-center justify-center ${
+                      isCenter ? 'aspect-[16/10]' : 'aspect-[4/3]'
+                    } ${
+                      isCutout
+                        ? 'bg-white dark:bg-[#201D1A] p-3'
+                        : 'bg-neutral-100 dark:bg-neutral-800'
+                    }`}
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className={`w-full h-full transition-transform duration-500 ${
+                        isCutout ? 'object-contain' : 'object-cover'
+                      } ${isCenter ? 'hover:scale-105' : ''}`}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          '/assets/images/hero_sate_taichan_1794494904829.jpg';
+                      }}
+                    />
+
+                    {/* Subtle rank tag only on center spotlight */}
+                    {isCenter && (
+                      <div className="absolute top-3 left-3 bg-[#1A1A1A]/85 dark:bg-black/75 text-white text-[11px] font-bold px-3 py-1 rounded-full">
+                        Top #{index + 1} Favorit
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Details */}
+                  <div className={isCenter ? 'p-5' : 'p-4'}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h3
+                          className={`font-extrabold text-[#1A1A1A] dark:text-white leading-snug ${
+                            isCenter ? 'text-base sm:text-lg' : 'text-sm line-clamp-1'
+                          }`}
+                        >
+                          {product.name}
+                        </h3>
+                        {product.portionDetail && (
+                          <p className="text-xs text-[#6B665E] dark:text-neutral-400 mt-0.5 line-clamp-1">
+                            {product.portionDetail}
+                          </p>
+                        )}
+                      </div>
+                      <span
+                        className={`font-black text-[#F39223] whitespace-nowrap tabular-nums ${
+                          isCenter ? 'text-base sm:text-lg' : 'text-sm'
+                        }`}
+                      >
+                        {formatRupiah(product.price)}
+                      </span>
+                    </div>
+
+                    {isCenter && (
+                      <div className="mt-4 pt-3 border-t border-[#E8E2D8] dark:border-neutral-800 flex items-center justify-between gap-3">
+                        <span className="text-xs text-[#555048] dark:text-neutral-400">
+                          Tersedia Sambal Kacang &amp; Pedas
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#F39223]">
+                          <span>Pesan Menu</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Slide Dots + "Lihat Semua Menu" Pill CTA (matching reference "View All" + down arrow) */}
+          <div className="mt-6 flex flex-col items-center gap-4">
+            <div className="flex items-center gap-2" role="tablist" aria-label="Pilih top menu">
+              {topThreeMenus.map((item, idx) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTopIndex === idx}
+                  aria-label={`Tampilkan ${item.name}`}
+                  onClick={() => setActiveTopIndex(idx)}
+                  className={`h-2 rounded-full transition-all cursor-pointer ${
+                    activeTopIndex === idx
+                      ? 'w-7 bg-[#F39223]'
+                      : 'w-2 bg-[#D8D0C5] dark:bg-neutral-700 hover:bg-[#F39223]/60'
+                  }`}
+                />
+              ))}
+            </div>
+
+            <div className="flex flex-col items-center gap-2">
+              <button
+                type="button"
+                onClick={() => scrollToSection('menu')}
+                className="px-7 py-2.5 rounded-full bg-white dark:bg-[#18181B] hover:bg-[#F5F2EB] dark:hover:bg-neutral-800 border border-[#E8E2D8] dark:border-neutral-700 text-xs sm:text-sm font-bold text-[#1A1A1A] dark:text-white shadow-xs transition-all cursor-pointer"
+              >
+                Lihat Semua Menu
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToSection('taichan-3d-stage')}
+                aria-label="Gulir ke tampilan 3D Sate Taichan"
+                className="w-7 h-7 rounded-full bg-white dark:bg-[#18181B] border border-[#E8E2D8] dark:border-neutral-700 text-[#555048] dark:text-neutral-300 hover:text-[#F39223] flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* BAND 3: Centered Frameless 3D Sate Taichan Showcase (tanpa ada frame pembatas) */}
+        <div
+          id="taichan-3d-stage"
+          className="relative pt-4 pb-2 flex flex-col items-center text-center"
+        >
+          {/* Ambient radial glow and subtle concentric backdrop rings (no rectangular frame or border) */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-4 mx-auto w-[20rem] sm:w-[30rem] h-[16rem] bg-[#F39223]/14 dark:bg-[#F39223]/18 rounded-full blur-3xl pointer-events-none"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute top-12 left-1/2 -translate-x-1/2 w-[22rem] sm:w-[34rem] h-[22rem] sm:h-[34rem] rounded-full border border-[#F39223]/15 dark:border-[#F39223]/15 pointer-events-none"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute top-20 left-1/2 -translate-x-1/2 w-[16rem] sm:w-[26rem] h-[16rem] sm:h-[26rem] rounded-full border border-[#E8E2D8]/80 dark:border-neutral-800/80 pointer-events-none"
+          />
+
+          <div className="relative z-10 max-w-xl mx-auto">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-[#F39223]">
+              Panggangan Arang Batok Kelapa
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-[#1A1A1A] dark:text-white mt-1">
+              Sate Taichan Rotterdam dengan Dua Pilihan Sambal
+            </h2>
+          </div>
+
+          <div className="relative z-10 w-full max-w-2xl mx-auto">
+            <ThreeTaichanCanvas />
+          </div>
         </div>
       </div>
-
-      {/* Street Food Live Animated Marquee Ticker */}
-      <div className="w-full bg-[#FAF0E4] dark:bg-[#1A1816] border-t border-[#E8E2D8] dark:border-neutral-800 py-2.5 overflow-hidden whitespace-nowrap">
-        <div className="inline-flex items-center gap-8 animate-marquee text-xs font-bold text-[#555048] dark:text-neutral-300">
-          <span className="flex items-center gap-1.5 text-[#F39223]">
-            <Flame className="w-3.5 h-3.5 fill-[#F39223]" /> #PedasnyaBikinNagih
-          </span>
-          <span>•</span>
-          <span>Sate Taichan Goreng & Bakar 100% Ayam Segar</span>
-          <span>•</span>
-          <span className="text-[#ED1C24]">Sambal Rawit Ulek Asli Pedas Segar</span>
-          <span>•</span>
-          <span>Arang Batok Kelapa Tradisional</span>
-          <span>•</span>
-          <span className="text-emerald-700 dark:text-emerald-400 font-extrabold">100% Halal Certified Indonesia</span>
-          <span>•</span>
-          <span>Samping Taman Benteng Fort Rotterdam Makassar</span>
-          <span>•</span>
-          <span className="flex items-center gap-1.5 text-[#F39223]">
-            <Flame className="w-3.5 h-3.5 fill-[#F39223]" /> #PedasnyaBikinNagih
-          </span>
-          <span>•</span>
-          <span>Sate Kulit Bakar & Goreng Crispy</span>
-          <span>•</span>
-          <span>Nasi Jeruk Komplit Porsi Kenyang</span>
-        </div>
-      </div>
-
     </section>
   );
 };

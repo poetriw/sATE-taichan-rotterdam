@@ -95,6 +95,11 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (Array.isArray(parsed)) {
           return parsed.map((item: CartItem) => ({
             ...item,
+            spicyLevel: item.spicyLevel
+              ? item.spicyLevel === 'Kacang'
+                ? 'Kacang'
+                : 'Pedas'
+              : undefined,
             product: item.product
               ? { ...item.product, image: normalizeAssetPath(item.product.image) }
               : item.product,

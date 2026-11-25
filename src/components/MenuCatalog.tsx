@@ -46,10 +46,9 @@ export const MenuCatalog: React.FC = () => {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white dark:bg-neutral-800 border border-[#ED1C24]/30 text-[#ED1C24] font-bold text-xs uppercase tracking-widest mb-3 shadow-xs">
-            <Flame className="w-3.5 h-3.5 fill-[#ED1C24]" />
-            <span>Katalog Resmi & Harga</span>
-          </div>
+          <span className="inline-block text-xs font-bold uppercase tracking-widest text-[#ED1C24] mb-2">
+            Katalog Resmi &amp; Harga
+          </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1A1A1A] dark:text-white tracking-tight">
             Pilihan Menu Sate Taichan
           </h2>
@@ -202,9 +201,8 @@ export const MenuCatalog: React.FC = () => {
                     {/* Badges */}
                     <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start">
                       {product.isBestSeller && (
-                        <span className="bg-[#ED1C24] text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1">
-                          <Flame className="w-3 h-3 fill-white" />
-                          <span>Best Seller</span>
+                        <span className="bg-[#ED1C24] text-white text-[10px] font-black uppercase px-2.5 py-1 rounded-md shadow-sm">
+                          Best Seller
                         </span>
                       )}
                     </div>

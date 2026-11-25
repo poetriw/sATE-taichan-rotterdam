@@ -424,7 +424,7 @@ export const AdminModal: React.FC = () => {
                           onChange={(e) => setSpicyLevelAvailable(e.target.checked)}
                           className="rounded text-[#F39223] focus:ring-0"
                         />
-                        <span>Pilihan Level Pedas Aktif</span>
+                        <span>Pilihan Sambal (Kacang / Pedas) Aktif</span>
                       </label>
                     </div>
 

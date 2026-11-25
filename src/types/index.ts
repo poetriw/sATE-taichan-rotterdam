@@ -6,7 +6,7 @@ export type Category =
   | 'Minuman' 
   | 'Menu Lainnya';
 
-export type SpicyLevel = 'Sedang' | 'Pedas' | 'Ekstra Pedas';
+export type SpicyLevel = 'Kacang' | 'Pedas';
 
 export interface Product {
   id: string;

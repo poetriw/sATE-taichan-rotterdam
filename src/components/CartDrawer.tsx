@@ -146,7 +146,7 @@ export const CartDrawer: React.FC = () => {
                         <div className="text-[11px] bg-white dark:bg-neutral-800 border border-[#E8E2D8] dark:border-neutral-700 rounded-lg p-2 text-[#555048] dark:text-neutral-300 space-y-1">
                           {item.spicyLevel && (
                             <p className="flex items-center gap-1.5">
-                              <span className="text-[#F39223] font-bold">Level Pedas:</span>
+                              <span className="text-[#F39223] font-bold">Pilihan Sambal:</span>
                               <span>{item.spicyLevel}</span>
                             </p>
                           )}

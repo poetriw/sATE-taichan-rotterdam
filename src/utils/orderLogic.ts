@@ -58,7 +58,7 @@ export function generateWhatsAppOrderMessage(
     text += `${index + 1}. *${item.product.name}*\n`;
     text += `   ${item.quantity}x @ ${formatRupiah(item.product.price)} = *${formatRupiah(itemSubtotal)}*\n`;
     if (item.spicyLevel) {
-      text += `   ↳ Level Pedas: ${item.spicyLevel}\n`;
+      text += `   ↳ Pilihan Sambal: ${item.spicyLevel}\n`;
     }
     if (item.notes && item.notes.trim()) {
       text += `   ↳ Catatan: ${item.notes.trim()}\n`;

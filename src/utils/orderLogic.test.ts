@@ -64,7 +64,7 @@ test('generateWhatsAppOrderMessage builds expected encoded URL and structured te
       id: 'c1',
       product: mockProduct,
       quantity: 2,
-      spicyLevel: 'Pedas',
+      spicyLevel: 'Kacang',
       notes: 'Sambal dipisah',
     },
   ];
@@ -77,14 +77,14 @@ test('generateWhatsAppOrderMessage builds expected encoded URL and structured te
     generalNotes: 'Jeruk nipis tambah 1',
   };
 
-  const result = generateWhatsAppOrderMessage(cart, details, '6281234567890');
+  const result = generateWhatsAppOrderMessage(cart, details, '6282238862922');
   assert.ok(result.message.includes('SATE TAICHAN ROTTERDAM'));
   assert.ok(result.message.includes('Ahmad Faiz'));
   assert.ok(result.message.includes('Meja 05'));
   assert.ok(result.message.includes('Sate Taichan Daging'));
-  assert.ok(result.message.includes('Pedas'));
+  assert.ok(result.message.includes('Pilihan Sambal: Kacang'));
   assert.ok(result.message.includes('#PedasnyaBikinNagih'));
-  assert.ok(result.url.startsWith('https://wa.me/6281234567890?text='));
+  assert.ok(result.url.startsWith('https://wa.me/6282238862922?text='));
 });
 
 test('filterProducts handles category filter and search', () => {
